@@ -1,3 +1,44 @@
+struct Circle {
+    x: f64,
+    y: f64,
+    radius: f64,
+}
+
+// essentially the functions to be attached to an "object"
+// rust doesn't have objects.
+impl Circle {
+    pub fn get_x(&self) -> f64 {
+        self.x
+    }
+}
+
+struct Rectangle {
+    height: f64,
+    width: f64,
+}
+
+trait HasArea {
+    fn area(&self) -> f64;
+}
+
+impl HasArea for Circle {
+    fn area(&self) -> f64 {
+        3.14159 * self.radius * self.radius
+    }
+}
+
+impl HasArea for Rectangle {
+    fn area(&self) -> f64 {
+        self.height * self.width
+    }
+}
+
+enum Hero {
+    Fast,
+    Strong(i32),
+    Info {name: String, secret: String}
+}
+
 fn main() {
     println!("Max {}: {}", "i8", std::i8::MAX);
     println!("Min {}: {}", "i8", std::i8::MIN);
@@ -95,6 +136,32 @@ fn main() {
      * interesting things with vectors --> reduce
      */
     println!("sum([1, 2, 3]): {}", sum_vector(&vec![1, 2, 3]));
+
+    /*
+     * structs
+     */
+    let circ1 = Circle {x:10f64, y: 10f64, radius:10f64};
+    println!("X: {}, Y: {}, R: {}", circ1.x, circ1.y, circ1.radius);
+    println!("X: {}, Y: {}, R: {}", circ1.get_x(), circ1.y, get_radius(&circ1));
+
+    println!("circle area: {}", circ1.area());
+
+    let rect1 = Rectangle{height: 10f64, width: 10f64};
+    println!("rectangle area: {}", rect1.area());
+
+    /*
+     * enumerated types
+     */
+    let hulk = Hero::Strong(100);
+    let quicksilver = Hero::Fast;
+    let spiderman = Hero::Info{
+        name: "Spiderman".to_owned(),
+        secret: "Peter Parker".to_owned()
+    };
+
+    get_info(hulk);
+    get_info(quicksilver);
+    get_info(spiderman);
 }
 
 fn sum_vector(v: &Vec<i32>) -> i32 {
@@ -104,4 +171,18 @@ fn sum_vector(v: &Vec<i32>) -> i32 {
     );
 
     return sum;
+}
+
+fn get_radius(circle: &Circle) -> f64 {
+    circle.radius
+}
+
+fn get_info(h: Hero){
+    match h {
+        Hero::Fast => println!("Fast"),
+        Hero::Strong(i) => println!("lifts {} tons", i),
+        Hero::Info {name, secret} => {
+            println!("{} is {}", name, secret);
+        }
+    }
 }
