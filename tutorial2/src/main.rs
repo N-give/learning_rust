@@ -90,4 +90,18 @@ fn main() {
             }
         }
     }
+
+    /*
+     * interesting things with vectors --> reduce
+     */
+    println!("sum([1, 2, 3]): {}", sum_vector(&vec![1, 2, 3]));
+}
+
+fn sum_vector(v: &Vec<i32>) -> i32 {
+    let sum = v.iter().fold(
+        0,
+        |mut sum, &x| { sum += x; sum }
+    );
+
+    return sum;
 }
