@@ -61,32 +61,33 @@ fn main() {
         Ok(n) => {
             println!("{} bytes read", n);
             println!("read in: {}", input);
-        }
+        } // When using curly braces, no comma is needed after a "case"
         Err(error) => println!("error: {}", error),
     }
-    // 'outer: loop {
-    //     let number: i32 = 10;
-    //     println!("Pick a number!");
 
-    //     loop {
-    //         let mut line = String::new();
-    //         let input = std::io::stdin().read_line(&mut line);
-    //         let guess: Option<i32> = input.ok().map_or(None, |_| line.trim().parse().ok());
+    'outer: loop {
+        let number: i32 = 10;
+        println!("Pick a number!");
 
-    //         match guess {
-    //             None => println!("Enter a number"),
-    //             Some(n) if n == number => {
-    //                 println!("You guessed it");
-    //                 break 'outer;
-    //             },
-    //             Some(n) if n < number => {
-    //                 println!("too low");
-    //             },
-    //             Some(n) if n > number => {
-    //                 println!("too high");
-    //             },
-    //             Some(_) => println!("Error"),
-    //         }
-    //     }
-    // }
+        loop {
+            let mut line = String::new();
+            let input = std::io::stdin().read_line(&mut line);
+            let guess: Option<i32> = input.ok().map_or(None, |_| line.trim().parse().ok());
+
+            match guess {
+                None => println!("Enter a number"),
+                Some(n) if n == number => {
+                    println!("You guessed it");
+                    break 'outer;
+                }
+                Some(n) if n < number => {
+                    println!("too low");
+                }
+                Some(n) if n > number => {
+                    println!("too high");
+                }
+                Some(_) => println!("Error"),
+            }
+        }
+    }
 }
