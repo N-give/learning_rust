@@ -92,4 +92,119 @@ fn main() {
             SpreadsheetCell::Text(s) => println!("text: {}", s),
         }
     }
+
+    /*
+     * Strings:
+     * Strings are utf-8 encoded and can handle many different chars
+     * Strings do not support indexing: s[0] will produce an error
+     */
+
+    // creates new empty string
+    let mut s1 = String::new();
+    let sample = "initial contents";
+    // this creates a String from a str literal
+    let s2 = sample.to_string();
+    // it can work directly on str literals too
+    let s3 = "inital content".to_string();
+    let s4 = String::from("intial content"); // s3 and s4 are equivalent computationally
+    let s5 = String::from("ሴ "); // chars that aren't just english
+    println!("{}", s5);
+
+    // Strings can be mutated, unlike strs
+    let mut s6 = String::from("Hello");
+    println!("{}", s6);
+    s6.push(',');
+    s6.push_str(" world");
+    println!("{}", s6);
+    s6.push_str(&s2);
+    println!("{}", s6);
+
+    // string contatenation
+    // when doing this, only the first item can be a String, and the rest must be &str
+    // this uses the add method -> fn add(self, s: &str) -> String
+    // this method consumes the first String
+    // if we don't want s2 to lose ownership, we should set the concatenation equal to itself
+    // s2 = s2 + ...
+    let s7 = s2 + " " + &s4;
+    println!("{}", s7);
+
+    // a less wild and more readable way to contatenate multiple strings
+    let s8 = format!("{}-{}-{}", s1, s3, s4);
+    // and this method doesn't consume the strings
+    println!("{}", s3);
+    println!("{}", s8);
+    println!("{}", s8.len());
+
+    // slicing strs
+    let s9 = "hello";
+    println!("{}", &s9[..3]);
+
+    for c in s9.chars() {
+        println!("{}", c);
+    }
+
+    for c in s9.bytes() {
+        println!("{}", c);
+    }
+
+    /*
+     * Hash maps
+     * HashMap is least often used from collections, so it is not automatically
+     * brought into scope
+     *
+     * all keys of a hash map must be of the same type and all values must be
+     * of the same type
+     */
+    let mut scores1 = std::collections::HashMap::new();
+    scores1.insert(String::from("Blue"), 10);
+    scores1.insert(String::from("Yellow"), 50);
+
+    // a hash map can also be created from a vector of tuples
+    let teams = vec![String::from("Blue"), String::from("Yellow")];
+    let init_scores = vec![10, 50];
+    let scores2: std::collections::HashMap<_, _> = teams.iter().zip(init_scores.iter()).collect();
+
+    // hash maps will copy simple types like i32... but not Strings
+    // Strings will be consumed
+    let field_name = String::from("favorite color");
+    let field_val = String::from("blue");
+    let mut map1 = std::collections::HashMap::new();
+    map1.insert(field_name, field_val);
+    // field name and field value are no longer available
+
+    let team_name = String::from("Blue");
+    let sc = scores2.get(&team_name);
+    match sc {
+        Some(&val) => println!("{} score: {}", team_name, val),
+        None => println!("Not in map"),
+    }
+    for (k, v) in &scores1 {
+        println!("{}: {}", k, v);
+    }
+
+    // this implementation of hash map only allows one value for each key
+    let mut map2 = std::collections::HashMap::new();
+    // this will override whatever value is currently in the map
+    map2.insert(String::from("blue"), 10);
+    map2.insert(String::from("blue"), 25);
+    match map2.get(&String::from("blue")) {
+        Some(&val) => println!("{} score: {}", "blue", val),
+        None => println!("Not in map"),
+    }
+
+    // only inserting a value if the key doens't already have a value
+    let mut map3 = std::collections::HashMap::new();
+    map3.insert(String::from("blue"), 10);
+    map3.entry(String::from("yellow")).or_insert(55);
+    map3.entry(String::from("blue")).or_insert(35);
+    println!("{:?}", map3);
+
+    // update value if key already exists based on current value
+    let text = "hello world said the world";
+    let mut map4 = std::collections::HashMap::new();
+    for word in text.split_whitespace() {
+        let count = map4.entry(word).or_insert(0);
+        *count += 1;
+    }
+    println!("{:?}", map4);
 }
