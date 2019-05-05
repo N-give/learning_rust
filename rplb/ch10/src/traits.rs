@@ -41,10 +41,48 @@ pub fn run() {
     };
 
     println!("1 new tweet: {}", t1.summarize_default());
-    notify(t1);
+    notify1(t1);
 }
 
 // passing a trait as a parameter
-pub fn notify(item: impl Summary) {
+pub fn notify1(item: impl Summary) {
     println!("Breaking news! {}", item.summarize());
+}
+
+// trait bound syntax
+pub fn notify2<T: Summary>(item: T) {
+    println!("breaking news! {}", item.summarize());
+}
+
+// multiple trait parameters
+pub fn notify3(item: impl Summary + std::fmt::Display) {
+    println!("breaking news! {}", item.summarize());
+}
+
+// specify multiple trait bounds with '+' syntax
+pub fn notify4<T: Summary + std::fmt::Display>(item: T) {
+    println!("breaking news! {}", item.summarize());
+}
+
+// clearer trait bounds with where clauses
+fn some_fn1<T: std::fmt::Display + Clone, U: Clone + std::fmt::Debug>(t: T, u: U){
+    // fn body
+}
+
+fn some_fn2<T, U>(t: T, u: U)
+    where T: std::fmt::Display + Clone,
+          U: Clone + std::fmt::Debug
+{
+    // fn body
+}
+
+// returning types that implement traits
+// this is only allowed if the function will only be returning one impl Trait
+fn return_summarizable() -> impl Summary {
+    Tweet {
+        username: String::from("horse_ebooks"),
+        content: String::from("of course, as you proabaly already know, people"),
+        reply: false,
+        retweet: false,
+    }
 }
