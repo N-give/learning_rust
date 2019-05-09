@@ -1,0 +1,63 @@
+= Iterators =
+
+== What's so great about Iterators ==
+* Iterators in Rust are lazy
+  * They have no effect until something else consumes it
+{{{rust
+let v1 = vec![1, 2, 3];
+let v1_iter = v1.iter(); // this can be saved and looped over later
+for val in v1_iter {
+  println!("Got: {}", val);
+}
+}}}
+
+=== The `next` method ===
+* `type Item` and `Self::Item`: to implement the iterator trait, an Item type must be defined
+  * the `Item` type must be the return type of the `next` method
+  * If the iterator is finished, `next` will return `None`
+{{{rust
+pub trait Iterator {
+  type Item;
+  fn next(&mut self) -> Option<Self::Item>
+}
+}}}
+
+* `next` can be called directly
+  * this requires that the iterator be a mutable type
+    * the internal state of the iterator is changed to track progress through
+      the sequence
+  * values returned from `next` are immutable references
+    * to take ownership of the iterable items `into_iter` may be called instead
+      of `iter`
+    * `iter_mut` does similar things, but iterates over mutable references
+
+=== Methods that Consume the Iterator ===
+* *consuming adaptors* call `next` on iterators and they consume the iterator
+* `sum` - takes ownership of an iterator and consumes it
+{{{rust
+let v1 = vec![1, 2, 3];
+let v1_iter = v1.iter();
+let total = v1_iter.sum();
+assert_eq!(total, 6);
+}}}
+
+* `collect` - consumes iterators collecting results into collection data type
+{{{rust
+let v1 = vec![1, 2, 3];
+let v2 = v1.iter().map(|x| x + 1).collect();
+assert_eq!(v2, vec![2, 3, 4]);
+}}}
+
+=== Methods that Produce Other Iterators ===
+* *iterator adaptors* change iterators into different kinds of iterators
+* iterator adaptors can be chained together
+  * a consuming adaptor method must be called to get results from calls to
+    iterator adaptors because itarators in Rust are lazy
+* `map` - calls closures on iterators to produce new iterators
+
+== Using Closures that capture Their Environment ==
+* `filter` - calls closures on iterators to return a boolean
+  * if the closure returns true, the value will be included in the new iterator
+
+== Creating Your Own Iterator ==
+* the only method required to create an iterator is `next`

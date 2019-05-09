@@ -4,3 +4,4 @@
   * Anonymous Functions
 
 = [[./iterators/iterators|Iterators]] =
+  * Iterators in Rust are lazy
