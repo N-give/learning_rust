@@ -1,0 +1,13 @@
+[package]
+name = "build_profiles"
+version = "0.1.0"
+authors = ["Nathan Givens <nate.givens03@gmail.com>"]
+edition = "2018"
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+opt-level = 2
+
+[dependencies]
