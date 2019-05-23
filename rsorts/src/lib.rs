@@ -1,44 +1,43 @@
-#[allow(unused_variables)]
 pub mod rsorts {
-    pub fn qsort<F>(arr: &mut [i32], cmp: F)
-    where
-        F: Fn(&i32, &i32) -> i32 + Copy,
-    {
-        if arr.len() <= 1 {
+    pub fn rqsort(arr: &mut [i32], rev: bool) {
+        if arr.len() == 1 {
             return;
         }
-        let mut front = 0 as usize;
-        let mut back = (arr.len() - 1) as usize;
-        // println!("length: {}", back);
-        println!("i:\n{:?}", arr);
+        let mut front = 0usize;
+        let mut back = (arr.len() - 2) as usize;
+        let cmp = arr[arr.len() - 1];
+        println!("begin:\n{:?}", arr);
+        println!("cmp: {}", cmp);
+
         while front < back {
-            front = match arr[front..(back + 1)]
+            front = arr[..(arr.len())]
                 .iter()
-                .position(|n| cmp(n, &arr[arr.len() - 1]).is_positive())
-            {
-                Some(i) => i,
-                None => front + 1,
-            };
+                .position(|n| {
+                    println!("{}", n);
+                    n > &cmp
+                })
+                .unwrap();
+            println!("front: {}, value: {}", front, arr[front]);
 
-            back = match arr[front..(back + 1)]
-                .iter()
-                .rev()
-                .position(|n| cmp(n, &arr[arr.len() - 1]).is_negative())
-            {
-                Some(i) => i,
-                None => front,
-            };
-            println!("front: {}, back: {}", front, back);
+            back = arr.len()
+                - 2
+                - arr[..(arr.len() - 1)]
+                    .iter()
+                    .rev()
+                    .position(|n| {
+                        println!("{}", n);
+                        n <= &cmp
+                    })
+                    .unwrap();
+            println!("back: {}, value: {}", back, arr[back]);
 
-            let tmp = arr[back];
-            arr[back] = arr[front];
-            arr[front] = tmp;
+            let tmp = arr[front];
+            arr[front] = arr[back];
+            arr[back] = tmp;
         }
         let tmp = arr[front];
         arr[front] = arr[arr.len() - 1];
         arr[arr.len() - 1] = tmp;
-        println!("e:\n{:?}\n", arr);
-        qsort(&mut arr[..front], cmp);
-        qsort(&mut arr[front..], cmp);
+        // println!("end:\n{:?}", arr);
     }
 }
