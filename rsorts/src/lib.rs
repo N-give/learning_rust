@@ -9,7 +9,7 @@ pub mod rsorts {
         println!("begin:\n{:?}", arr);
         println!("cmp: {}", cmp);
 
-        while front < back {
+        while {
             front = arr[..(arr.len())]
                 .iter()
                 .position(|n| {
@@ -30,10 +30,12 @@ pub mod rsorts {
                     })
                     .unwrap();
             println!("back: {}, value: {}", back, arr[back]);
-
+            front < back
+        } {
             let tmp = arr[front];
             arr[front] = arr[back];
             arr[back] = tmp;
+            println!("intermediate: {:?}", arr);
         }
         let tmp = arr[front];
         arr[front] = arr[arr.len() - 1];
