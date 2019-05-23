@@ -13,7 +13,7 @@ pub mod rsorts {
             front = match arr[..(arr.len())]
                 .iter()
                 .position(|n| {
-                    n > &cmp
+                    *n > cmp
                 })
             {
                 Some(i) => i,
@@ -24,7 +24,7 @@ pub mod rsorts {
                     .iter()
                     .rev()
                     .position(|n| {
-                        n <= &cmp
+                        *n <= cmp
                     })
             {
                 Some(i) => arr.len() - 2 - i,

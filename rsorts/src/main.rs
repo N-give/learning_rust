@@ -1,4 +1,4 @@
-use rsorts::rsorts::{rqsort, gen_rqsort};
+use rsorts::rsorts::gen_rqsort;
 extern crate rand;
 use rand::Rng;
 // use std::io::BufReader;
