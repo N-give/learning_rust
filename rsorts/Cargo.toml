@@ -3,6 +3,11 @@ name = "rsorts"
 version = "0.1.0"
 authors = ["Nathan Givens <nate.givens03@gmail.com>"]
 edition = "2018"
+build = "build.rs"
 
 [dependencies]
 rand = "0.6.5"
+
+[build-dependencies]
+rand = "*"
+crossbeam-epoch = "0.7"
