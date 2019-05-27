@@ -1,15 +1,23 @@
+#[allow(unused_variables)]
 extern crate regex;
 
 use regex::Regex;
 use std::collections::HashMap;
-use std::io::BufReader;
 use std::io::prelude::*;
+use std::io::BufReader;
 
-// kjkj
 static REGEX_IDENTIFIER: &str = r"\w[a-zA-Z0-9]+";
-// static REGEX_INTLITERAl: &str = r"\d+";
-// static REGEX_FLOATLITER: &str = r"\d+\.\d+";
-// static REGEX_STRINGLITERAL: &str = r"";
+static REGEX_INTLITERAl: &str = r"\d+";
+static REGEX_FLOATLITER: &str = r"\d*\.\d+";
+static REGEX_STRINGLITERAL: &str = r#""\.*""#;
+static REGEX_COMMENT: &str = r"--\.*$";
+static REGEX_OPERATORS: &str = r":=|+|-|*|/|=|!=|<|>|(|)|;|,|<=|>=|";
+
+static MICRO_KEYWORDS: Vec<str> = vec![
+    "PROGRAM", "BEGIN", "END", "FUNCTION", "READ", "WRITE", "IF", "ELSE", "ENDIF", "WHILE",
+    "ENDWHILE", "RETURN", "INT", "VOID", "STRING", "FLOAT", "TRUE", "FALSE", "FOR", "ENDFOR",
+    "CONTINUE", "BREAK",
+];
 
 pub fn scan_file(fp: std::fs::File) -> Result<HashMap<String, String>, std::io::Error> {
     let tokens: HashMap<String, String> = HashMap::new();
