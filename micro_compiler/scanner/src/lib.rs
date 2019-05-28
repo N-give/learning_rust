@@ -24,10 +24,16 @@ pub fn scan_file(fp: std::fs::File) -> Result<HashMap<String, String>, std::io::
     for line in reader.lines() {
         let line = line.expect("failed to read line");
         let line = line.trim();
+        // TODO
+        if let Some(cap) = tre.find(&line) {
+            println!("captured: {:?}", &line[cap.start()..cap.end()]);
+        }
+        /*
         if tre.is_match(&line) {
             let captured = tre.find(&line).unwrap();
             println!("captured: {:?}", &line[captured.start()..captured.end()]);
         }
+        */
     }
     Ok(tokens)
 }
