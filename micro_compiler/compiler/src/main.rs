@@ -11,6 +11,6 @@ fn main() -> Result<(), std::io::Error> {
     }
     let fp = File::open(argv[1].to_owned())?;
     let tokens = scanner::scan_file(fp)?;
-    println!("{:?}", tokens);
+    println!("{:#?}", tokens);
     Ok(())
 }
