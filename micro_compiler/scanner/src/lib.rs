@@ -2,29 +2,35 @@
 extern crate lazy_static;
 extern crate regex;
 
-use regex::Regex;
+use regex::{Regex, RegexSet};
 use std::collections::VecDeque;
 use std::io::prelude::*;
 use std::io::BufReader;
 
-static IDENTIFIER_PATTERN: &str = r"\w[a-zA-Z0-9]+";
+static IDENTIFIER_PATTERN: &str = r"[a-zA-Z]{1}[a-zA-Z0-9]*";
 static INTLITERAL_PATTERN: &str = r"\d+";
 static FLOATLITER_PATTERN: &str = r"\d*\.\d+";
 static STRINGLITERAL_PATTERN: &str = r#"".*""#;
-static COMMENT_PATTERN: &str = r"--.*$";
-// TODO Failes to compile regex
-// static OPERATORS_PATTERN: &str = r":=|[+]|-|[*]|/|=|!=|<|>|(|)|;|,|<=|>=";
-static KEYWORDS_PATTERN: &str = r"PROGRAM|BEGIN|END|FUNCTION|READ|WRITE|IF|ELSE|ENDIF|WHILE|ENDWHILE|RETURN|INT|VOID|STRING|FLOAT|TRUE|FALSE|FOR|ENDFOR|CONTINUE|BREAK";
+static COMMENT_PATTERN: &str = r"--.*";
+// TODO fails to separate -2
+static OPERATORS_PATTERN: &str = r"[+]|-{1}|[*]|/|\(|\)|;|,|!=|:=|<=|<|>=|>|=";
+static KEYWORDS_PATTERN: &str = r"PROGRAM|BEGIN|FUNCTION|READ|WRITE|ELSE|ENDIF|IF|WHILE|ENDWHILE|RETURN|INT|VOID|STRING|FLOAT|TRUE|FALSE|ENDFOR|FOR|CONTINUE|END|BREAK";
 
 #[derive(Debug)]
 pub struct Token {
-    token_type: TokenType,
-    value: String,
+    pub token_type: TokenType,
+    pub value: String,
 }
 
 impl Token {
     pub fn new(value: String, token_type: TokenType) -> Token {
         Token { token_type, value }
+    }
+}
+
+impl std::fmt::Display for Token {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "Token Type: {:?}\nValue: {}", self.token_type, self.value)
     }
 }
 
@@ -56,53 +62,59 @@ pub fn scan_file(fp: std::fs::File) -> Result<VecDeque<Token>, std::io::Error> {
 
 fn get_tokens(line: &str) -> Result<VecDeque<Token>, std::io::Error> {
     lazy_static! {
-        static ref REGEX_IDENTIFIER: Regex = Regex::new(IDENTIFIER_PATTERN).unwrap();
-        static ref REGEX_INTLITERAL: Regex = Regex::new(INTLITERAL_PATTERN).unwrap();
-        static ref REGEX_FLOATLITER: Regex = Regex::new(FLOATLITER_PATTERN).unwrap();
-        static ref REGEX_STRINGLITERAL: Regex = Regex::new(STRINGLITERAL_PATTERN).unwrap();
-        static ref REGEX_COMMENT: Regex = Regex::new(COMMENT_PATTERN).unwrap();
-        static ref REGEX_KEYWORDS: Regex = Regex::new(KEYWORDS_PATTERN).unwrap();
+        static ref ALL_REGEX: Vec<Regex> = vec![
+            Regex::new(KEYWORDS_PATTERN).unwrap(),
+            Regex::new(IDENTIFIER_PATTERN).unwrap(),
+            Regex::new(FLOATLITER_PATTERN).unwrap(),
+            Regex::new(INTLITERAL_PATTERN).unwrap(),
+            Regex::new(STRINGLITERAL_PATTERN).unwrap(),
+            Regex::new(COMMENT_PATTERN).unwrap(),
+            Regex::new(OPERATORS_PATTERN).unwrap(),
+        ];
+
+        static ref REGEX_SET: RegexSet = RegexSet::new(&[
+                                                       KEYWORDS_PATTERN,
+                                                       IDENTIFIER_PATTERN,
+                                                       FLOATLITER_PATTERN,
+                                                       INTLITERAL_PATTERN,
+                                                       STRINGLITERAL_PATTERN,
+                                                       COMMENT_PATTERN,
+                                                       OPERATORS_PATTERN,
+        ]).unwrap();
     }
 
     let mut toks: VecDeque<Token> = VecDeque::new();
-    let parts: VecDeque<Token> = line
-        .split_whitespace()
-        .filter_map(|word| match word {
-            'A'...'Z' => Some(Token::new(word.to_string(), TokenType::KEYWORD)),
-            _ => {
-                println!("nothing yet");
-                None
-            }
-        })
-        .collect();
-    // let mut end: usize = 0;
-    /*
     let mut end: usize = 0;
+
     while {
-        if let Some(fnd) = REGEX_KEYWORDS.find(&line[end..]) {
-            toks.push_back(Token::new(
-                line[fnd.start()..fnd.end()].to_string(),
-                TokenType::KEYWORD,
-            ));
-            end = fnd.end();
-        } else if let Some(fnd) = REGEX_IDENTIFIER.find(&line[end..]) {
-            toks.push_back(Token::new(
-                line[fnd.start()..fnd.end()].to_string(),
-                TokenType::IDENTIFIER,
-            ));
-            end = fnd.end();
-        }
-        if let Some(fnd) = REGEX_INTLITERAL.find(&line[end..]) {
-            toks.push_back(Token::new(
-                line[fnd.start()..fnd.end()].to_string(),
-                TokenType::INTLITERAL,
-            ));
+        let matched = REGEX_SET.matches(&line[end..]);
+        if matched.matched_any() {
+            let (t, m) = matched
+                .into_iter()
+                .map(|ri| {
+                    let m = ALL_REGEX[ri].find(&line[end..]).unwrap();
+                    (ri, m)
+                }).min_by(|x, y| x.1.start().cmp(&y.1.start()))
+            .unwrap();
+            if t != 5 {
+                let t = match t {
+                    0 => TokenType::KEYWORD,
+                    1 => TokenType::IDENTIFIER,
+                    2 => TokenType::FLOATLITERAL,
+                    3 => TokenType::INTLITERAL,
+                    4 => TokenType::STRINGLITERAL,
+                    5 => TokenType::COMMENT,
+                    6 => TokenType::OPERATOR,
+                    _ => panic!("Out of Range"),
+                };
+                toks.push_back(Token::new(
+                        line[(end + m.start())..(end + m.end())].trim().to_string(),
+                        t,
+                        ));
+            }
+            end += m.end();
         }
         end < line.len()
     } {}
-    line
-        .split_whitespace()
-        .for_each
-    */
     Ok(toks)
 }
