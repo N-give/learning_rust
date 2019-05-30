@@ -1,6 +1,10 @@
+extern crate num;
+extern crate regex;
+
 #[macro_use]
 extern crate lazy_static;
-extern crate regex;
+#[macro_use]
+extern crate num_derive;
 
 use regex::{Regex, RegexSet};
 use std::collections::VecDeque;
@@ -12,7 +16,6 @@ static INTLITERAL_PATTERN: &str = r"\d+";
 static FLOATLITER_PATTERN: &str = r"\d*\.\d+";
 static STRINGLITERAL_PATTERN: &str = r#"".*""#;
 static COMMENT_PATTERN: &str = r"--.*";
-// TODO fails to separate -2
 static OPERATORS_PATTERN: &str = r"[+]|-{1}|[*]|/|\(|\)|;|,|!=|:=|<=|<|>=|>|=";
 static KEYWORDS_PATTERN: &str = r"PROGRAM|BEGIN|FUNCTION|READ|WRITE|ELSE|ENDIF|IF|WHILE|ENDWHILE|RETURN|INT|VOID|STRING|FLOAT|TRUE|FALSE|ENDFOR|FOR|CONTINUE|END|BREAK";
 
@@ -34,15 +37,24 @@ impl std::fmt::Display for Token {
     }
 }
 
-#[derive(Debug)]
+
+// 0 => TokenType::KEYWORD,
+// 1 => TokenType::IDENTIFIER,
+// 2 => TokenType::FLOATLITERAL,
+// 3 => TokenType::INTLITERAL,
+// 4 => TokenType::STRINGLITERAL,
+// 5 => TokenType::COMMENT,
+// 6 => TokenType::OPERATOR,
+// _ => panic!("Out of Range"),
+#[derive(FromPrimitive, PartialEq, Debug)]
 pub enum TokenType {
-    IDENTIFIER,
-    INTLITERAL,
-    FLOATLITERAL,
-    STRINGLITERAL,
-    COMMENT,
-    KEYWORD,
-    OPERATOR,
+    KEYWORD = 0,
+    IDENTIFIER = 1,
+    FLOATLITERAL = 2,
+    INTLITERAL = 3,
+    STRINGLITERAL = 4,
+    COMMENT = 5,
+    OPERATOR = 6,
 }
 
 pub fn scan_file(fp: std::fs::File) -> Result<VecDeque<Token>, std::io::Error> {
@@ -89,6 +101,10 @@ fn get_tokens(line: &str) -> Result<VecDeque<Token>, std::io::Error> {
     while {
         let matched = REGEX_SET.matches(&line[end..]);
         if matched.matched_any() {
+            // TODO
+            // very un-optimized
+            // should cache results from here and work through those before
+            // testing again
             let (t, m) = matched
                 .into_iter()
                 .map(|ri| {
@@ -96,7 +112,9 @@ fn get_tokens(line: &str) -> Result<VecDeque<Token>, std::io::Error> {
                     (ri, m)
                 }).min_by(|x, y| x.1.start().cmp(&y.1.start()))
             .unwrap();
-            if t != 5 {
+            let t = num::FromPrimitive::from_usize(t).unwrap();
+            if t != TokenType::COMMENT {
+                /*
                 let t = match t {
                     0 => TokenType::KEYWORD,
                     1 => TokenType::IDENTIFIER,
@@ -107,6 +125,7 @@ fn get_tokens(line: &str) -> Result<VecDeque<Token>, std::io::Error> {
                     6 => TokenType::OPERATOR,
                     _ => panic!("Out of Range"),
                 };
+                */
                 toks.push_back(Token::new(
                         line[(end + m.start())..(end + m.end())].trim().to_string(),
                         t,

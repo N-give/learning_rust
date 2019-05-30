@@ -7,3 +7,6 @@ edition = "2018"
 [dependencies]
 lazy_static = "*"
 regex = "*"
+num = "*"
+num-derive = "*"
+num-traits = "*"
