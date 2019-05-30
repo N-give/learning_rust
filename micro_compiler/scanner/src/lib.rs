@@ -107,25 +107,11 @@ fn get_tokens(line: &str) -> Result<VecDeque<Token>, std::io::Error> {
             // testing again
             let (t, m) = matched
                 .into_iter()
-                .map(|ri| {
-                    let m = ALL_REGEX[ri].find(&line[end..]).unwrap();
-                    (ri, m)
-                }).min_by(|x, y| x.1.start().cmp(&y.1.start()))
-            .unwrap();
+                .map(|ri| (ri, ALL_REGEX[ri].find(&line[end..]).unwrap()))
+                .min_by(|x, y| x.1.start().cmp(&y.1.start()))
+                .unwrap();
             let t = num::FromPrimitive::from_usize(t).unwrap();
             if t != TokenType::COMMENT {
-                /*
-                let t = match t {
-                    0 => TokenType::KEYWORD,
-                    1 => TokenType::IDENTIFIER,
-                    2 => TokenType::FLOATLITERAL,
-                    3 => TokenType::INTLITERAL,
-                    4 => TokenType::STRINGLITERAL,
-                    5 => TokenType::COMMENT,
-                    6 => TokenType::OPERATOR,
-                    _ => panic!("Out of Range"),
-                };
-                */
                 toks.push_back(Token::new(
                         line[(end + m.start())..(end + m.end())].trim().to_string(),
                         t,
