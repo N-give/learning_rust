@@ -37,15 +37,6 @@ impl std::fmt::Display for Token {
     }
 }
 
-
-// 0 => TokenType::KEYWORD,
-// 1 => TokenType::IDENTIFIER,
-// 2 => TokenType::FLOATLITERAL,
-// 3 => TokenType::INTLITERAL,
-// 4 => TokenType::STRINGLITERAL,
-// 5 => TokenType::COMMENT,
-// 6 => TokenType::OPERATOR,
-// _ => panic!("Out of Range"),
 #[derive(FromPrimitive, PartialEq, Debug)]
 pub enum TokenType {
     KEYWORD = 0,
