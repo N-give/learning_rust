@@ -1,12 +1,10 @@
-extern crate num;
-extern crate regex;
-
 #[macro_use]
 extern crate lazy_static;
 #[macro_use]
 extern crate num_derive;
 
-use regex::{Regex, RegexSet};
+use num;
+use regex::{self, Regex, RegexSet};
 use std::collections::VecDeque;
 use std::io::prelude::*;
 use std::io::BufReader;
@@ -16,7 +14,7 @@ static INTLITERAL_PATTERN: &str = r"\d+";
 static FLOATLITER_PATTERN: &str = r"\d*\.\d+";
 static STRINGLITERAL_PATTERN: &str = r#"".*""#;
 static COMMENT_PATTERN: &str = r"--.*";
-static OPERATORS_PATTERN: &str = r"[+]|-{1}|[*]|/|\(|\)|;|,|!=|:=|<=|<|>=|>|=";
+static OPERATORS_PATTERN: &str = r"\+|-|\*|/|\(|\)|;|,|!=|:=|<=|<|>=|>|=";
 static KEYWORDS_PATTERN: &str = r"PROGRAM|BEGIN|FUNCTION|READ|WRITE|ELSE|ENDIF|IF|WHILE|ENDWHILE|RETURN|INT|VOID|STRING|FLOAT|TRUE|FALSE|ENDFOR|FOR|CONTINUE|END|BREAK";
 
 lazy_static! {
@@ -118,3 +116,34 @@ fn get_tokens(line: &str) -> Result<VecDeque<Token>, std::io::Error> {
     } {}
     Ok(toks)
 }
+
+/*
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn keyword_test() {
+        let test_string = "WHILE (x1 > 1)";
+        assert_eq!(ALL_REGEX[0].find(&test_string).unwrap().as_str(), "WHILE");
+    }
+
+    #[test]
+    fn keyword_test() {
+        let test_string = "WHILE (x1 > 1)";
+        assert_eq!(ALL_REGEX[0].find(&test_string).unwrap().as_str(), "WHILE");
+    }
+
+    #[test]
+    fn keyword_test() {
+        let test_string = "WHILE (x1 > 1)";
+        assert_eq!(ALL_REGEX[0].find(&test_string).unwrap().as_str(), "WHILE");
+    }
+
+    #[test]
+    fn keyword_test() {
+        let test_string = "WHILE (x1 > 1)";
+        assert_eq!(ALL_REGEX[0].find(&test_string).unwrap().as_str(), "WHILE");
+    }
+}
+*/

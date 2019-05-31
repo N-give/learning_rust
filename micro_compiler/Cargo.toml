@@ -2,5 +2,6 @@
 
 members = [
   "compiler",
-  "scanner"
+  "scanner",
+  "parser",
 ]
