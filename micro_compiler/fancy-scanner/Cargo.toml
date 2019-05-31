@@ -1,13 +1,12 @@
 [package]
-name = "scanner"
+name = "fancy-scanner"
 version = "0.1.0"
-authors = ["nate <nate.givens03@gmail.com>"]
+authors = ["Nathan Givens <nate.givens03@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-lazy_static = "*"
-regex = "*"
 fancy-regex = "0.1.0"
+lazy_static = "*"
 num = "*"
 num-derive = "*"
 num-traits = "*"
