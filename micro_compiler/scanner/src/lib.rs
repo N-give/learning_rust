@@ -19,6 +19,28 @@ static COMMENT_PATTERN: &str = r"--.*";
 static OPERATORS_PATTERN: &str = r"[+]|-{1}|[*]|/|\(|\)|;|,|!=|:=|<=|<|>=|>|=";
 static KEYWORDS_PATTERN: &str = r"PROGRAM|BEGIN|FUNCTION|READ|WRITE|ELSE|ENDIF|IF|WHILE|ENDWHILE|RETURN|INT|VOID|STRING|FLOAT|TRUE|FALSE|ENDFOR|FOR|CONTINUE|END|BREAK";
 
+lazy_static! {
+    static ref ALL_REGEX: Vec<Regex> = vec![
+        Regex::new(KEYWORDS_PATTERN).unwrap(),
+        Regex::new(IDENTIFIER_PATTERN).unwrap(),
+        Regex::new(FLOATLITER_PATTERN).unwrap(),
+        Regex::new(INTLITERAL_PATTERN).unwrap(),
+        Regex::new(STRINGLITERAL_PATTERN).unwrap(),
+        Regex::new(COMMENT_PATTERN).unwrap(),
+        Regex::new(OPERATORS_PATTERN).unwrap(),
+    ];
+    static ref REGEX_SET: RegexSet = RegexSet::new(&[
+        KEYWORDS_PATTERN,
+        IDENTIFIER_PATTERN,
+        FLOATLITER_PATTERN,
+        INTLITERAL_PATTERN,
+        STRINGLITERAL_PATTERN,
+        COMMENT_PATTERN,
+        OPERATORS_PATTERN,
+    ])
+    .unwrap();
+}
+
 #[derive(Debug)]
 pub struct Token {
     pub token_type: TokenType,
@@ -33,7 +55,11 @@ impl Token {
 
 impl std::fmt::Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "Token Type: {:?}\nValue: {}", self.token_type, self.value)
+        write!(
+            f,
+            "Token Type: {:?}\nValue: {}",
+            self.token_type, self.value
+        )
     }
 }
 
@@ -64,28 +90,6 @@ pub fn scan_file(fp: std::fs::File) -> Result<VecDeque<Token>, std::io::Error> {
 }
 
 fn get_tokens(line: &str) -> Result<VecDeque<Token>, std::io::Error> {
-    lazy_static! {
-        static ref ALL_REGEX: Vec<Regex> = vec![
-            Regex::new(KEYWORDS_PATTERN).unwrap(),
-            Regex::new(IDENTIFIER_PATTERN).unwrap(),
-            Regex::new(FLOATLITER_PATTERN).unwrap(),
-            Regex::new(INTLITERAL_PATTERN).unwrap(),
-            Regex::new(STRINGLITERAL_PATTERN).unwrap(),
-            Regex::new(COMMENT_PATTERN).unwrap(),
-            Regex::new(OPERATORS_PATTERN).unwrap(),
-        ];
-
-        static ref REGEX_SET: RegexSet = RegexSet::new(&[
-                                                       KEYWORDS_PATTERN,
-                                                       IDENTIFIER_PATTERN,
-                                                       FLOATLITER_PATTERN,
-                                                       INTLITERAL_PATTERN,
-                                                       STRINGLITERAL_PATTERN,
-                                                       COMMENT_PATTERN,
-                                                       OPERATORS_PATTERN,
-        ]).unwrap();
-    }
-
     let mut toks: VecDeque<Token> = VecDeque::new();
     let mut end: usize = 0;
 
@@ -104,9 +108,9 @@ fn get_tokens(line: &str) -> Result<VecDeque<Token>, std::io::Error> {
             let t = num::FromPrimitive::from_usize(t).unwrap();
             if t != TokenType::COMMENT {
                 toks.push_back(Token::new(
-                        line[(end + m.start())..(end + m.end())].trim().to_string(),
-                        t,
-                        ));
+                    line[(end + m.start())..(end + m.end())].trim().to_string(),
+                    t,
+                ));
             }
             end += m.end();
         }
