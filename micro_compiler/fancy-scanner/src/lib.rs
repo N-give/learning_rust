@@ -10,7 +10,7 @@ use std::collections::VecDeque;
 use std::io::prelude::*;
 use std::io::BufReader;
 
-static IDENTIFIER_PATTERN: &str = r"(?!PROGRAM|BEGIN|FUNCTION|READ|WRITE|ELSE|ENDIF|IF|WHILE|ENDWHILE|RETURN|INT|VOID|STRING|FLOAT|TRUE|FALSE|ENDFOR|FOR|CONTINUE|END|BREAK)[a-zA-Z]{1}\w*";
+static IDENTIFIER_PATTERN: &str = r"[a-zA-Z]{1}\w*";
 static INTLITERAL_PATTERN: &str = r"\d+";
 static FLOATLITER_PATTERN: &str = r"\d*\.\d+";
 static STRINGLITERAL_PATTERN: &str = r#"".*""#;
@@ -82,6 +82,26 @@ fn get_tokens(line: &str) -> Result<VecDeque<Token>, std::io::Error> {
     let mut toks: VecDeque<Token> = VecDeque::new();
     // let mut end: usize = 0;
 
+    let all_caps: Vec<Vec<Captures>> = line
+        .split_whitespace()
+        .map(|word| {
+            ALL_REGEX
+                .iter()
+                .map(|re| re.captures(word).unwrap())
+                .filter_map(|cap| cap)
+                .collect()
+        })
+        .collect();
+
+    for caps in all_caps.iter() {
+        for cap in caps.iter() {
+            for group in cap.iter() {
+                println!("{:?}", group.unwrap());
+            }
+        }
+    }
+    // println!("{:?}", caps);
+    /*
     while {
         // TODO
         // rework this section to use fancy regex instead of RegexSet
@@ -96,32 +116,10 @@ fn get_tokens(line: &str) -> Result<VecDeque<Token>, std::io::Error> {
                 println!("{:?}", g.unwrap());
             }
         }
-        // println!("{:?}", matches);
-        /*
-        let matched = REGEX_SET.matches(&line[end..]);
-        if matched.matched_any() {
-            // TODO
-            // very un-optimized
-            // should cache results from here and work through those before
-            // testing again
-            let (t, m) = matched
-                .into_iter()
-                .map(|ri| (ri, ALL_REGEX[ri].find(&line[end..]).unwrap()))
-                .min_by(|x, y| x.1.start().cmp(&y.1.start()))
-                .unwrap();
-            let t = num::FromPrimitive::from_usize(t).unwrap();
-            if t != TokenType::COMMENT {
-                toks.push_back(Token::new(
-                    line[(end + m.start())..(end + m.end())].trim().to_string(),
-                    t,
-                ));
-            }
-            end += m.end();
-        }
-        end < line.len()
-        */
+        // end < line.len()
         false
     } {}
+    */
     Ok(toks)
 }
 
