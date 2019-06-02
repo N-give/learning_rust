@@ -118,7 +118,6 @@ fn get_tokens(line: &str) -> Result<VecDeque<Token>, std::io::Error> {
 }
 
 /*
->>>>>>> 72baccf6a37d7820cee5a0bc06d7fc1870adf80c
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -130,20 +129,17 @@ mod tests {
     }
 
     #[test]
-<<<<<<< HEAD
     fn identifier_test() {
         let test_string = "WHILE (x1 > 1)";
         assert_eq!(ALL_REGEX[1].find(&test_string).unwrap().as_str(), "x1");
     }
 
     /*
-=======
     fn keyword_test() {
         let test_string = "WHILE (x1 > 1)";
         assert_eq!(ALL_REGEX[0].find(&test_string).unwrap().as_str(), "WHILE");
     }
 
->>>>>>> 72baccf6a37d7820cee5a0bc06d7fc1870adf80c
     #[test]
     fn keyword_test() {
         let test_string = "WHILE (x1 > 1)";
@@ -155,9 +151,6 @@ mod tests {
         let test_string = "WHILE (x1 > 1)";
         assert_eq!(ALL_REGEX[0].find(&test_string).unwrap().as_str(), "WHILE");
     }
-<<<<<<< HEAD
     */
-}
-=======
 }
 */

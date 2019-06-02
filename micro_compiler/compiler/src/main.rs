@@ -1,8 +1,8 @@
-use fancy_scanner;
-// use scanner;
+// use fancy_scanner;
+use scanner;
+use std::env;
 use std::fs::File;
 // use std::io::prelude::*;
-use std::env;
 
 fn main() -> Result<(), std::io::Error> {
     let argv: Vec<String> = env::args().collect();
@@ -11,7 +11,7 @@ fn main() -> Result<(), std::io::Error> {
         std::process::exit(-1);
     }
     let fp = File::open(argv[1].to_owned())?;
-    let tokens = fancy_scanner::scan_file(fp)?;
+    let tokens = scanner::scan_file(fp)?;
     for t in tokens.into_iter() {
         println!("{}", t);
     }
