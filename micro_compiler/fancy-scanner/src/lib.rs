@@ -79,7 +79,7 @@ pub fn scan_file(fp: std::fs::File) -> Result<VecDeque<Token>, std::io::Error> {
 }
 
 fn get_tokens(line: &str) -> Result<VecDeque<Token>, std::io::Error> {
-    let mut toks: VecDeque<Token> = VecDeque::new();
+    let toks: VecDeque<Token> = VecDeque::new();
     // let mut end: usize = 0;
 
     let all_caps: Vec<Vec<Captures>> = line
