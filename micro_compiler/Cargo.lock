@@ -39,6 +39,7 @@ name = "compiler"
 version = "0.1.0"
 dependencies = [
  "fancy-scanner 0.1.0",
+ "parser 0.1.0",
  "scanner 0.1.0",
 ]
 
@@ -172,6 +173,9 @@ dependencies = [
 [[package]]
 name = "parser"
 version = "0.1.0"
+dependencies = [
+ "scanner 0.1.0",
+]
 
 [[package]]
 name = "proc-macro2"

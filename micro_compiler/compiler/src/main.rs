@@ -1,4 +1,6 @@
 // use fancy_scanner;
+
+use parser::parse_file;
 use scanner;
 use std::env;
 use std::fs::File;
@@ -12,8 +14,6 @@ fn main() -> Result<(), std::io::Error> {
     }
     let fp = File::open(argv[1].to_owned())?;
     let tokens = scanner::scan_file(fp)?;
-    for t in tokens.into_iter() {
-        println!("{}", t);
-    }
+    parse_file(tokens);
     Ok(())
 }

@@ -51,16 +51,6 @@ impl Token {
     }
 }
 
-impl std::fmt::Display for Token {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(
-            f,
-            "Token Type: {:?}\nValue: {}",
-            self.token_type, self.value
-        )
-    }
-}
-
 #[derive(FromPrimitive, PartialEq, Debug)]
 pub enum TokenType {
     KEYWORD = 0,

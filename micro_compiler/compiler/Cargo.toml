@@ -7,3 +7,4 @@ edition = "2018"
 [dependencies]
 scanner = { path = "../scanner" }
 fancy-scanner = { path = "../fancy-scanner" }
+parser = { path = "../parser" }
