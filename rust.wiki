@@ -1,5 +1,0 @@
-= Learning Rust =
-
-== The Rust Programming Language ==
-=== [[./rplb/ch13/ch13.wiki|Ch 13]] ===
-
