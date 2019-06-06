@@ -25,10 +25,8 @@ pub fn parse_file(tokens: VecDeque<Token>) {
                 TokenType::FLOATLITERAL => println!("floatliteral"),
                 TokenType::INTLITERAL => println!("intliteral"),
                 TokenType::STRINGLITERAL => println!("stringliteral"),
-                TokenType::COMMENT => {
-                    println!("This should never happen as comments are never pushed on the queue")
-                }
                 TokenType::OPERATOR => println!("operator"),
+                _ => continue,
             }
         }
     }
