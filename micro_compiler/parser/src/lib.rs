@@ -1,6 +1,18 @@
 use scanner::{Token, TokenType};
 use std::collections::VecDeque;
 
+pub struct Program {
+    pub program: String,
+    pub id: String,
+    pub pgm_body: String,
+    pub decl: Option<String>,
+}
+
+pub enum GlobalString {
+    StringDecl,
+    Str,
+}
+
 pub fn parse_file(tokens: VecDeque<Token>) {
     let mut tok_iter = tokens.iter().peekable();
 
