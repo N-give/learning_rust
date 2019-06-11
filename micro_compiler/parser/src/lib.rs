@@ -4,7 +4,7 @@ use std::collections::VecDeque;
 pub struct Program {
     pub program: String,
     pub id: String,
-    pub pgm_body: String,
+    pub pgm_body: Vec<String>,
     pub decl: Option<String>,
 }
 
@@ -23,10 +23,8 @@ pub fn parse_file(tokens: VecDeque<Token>) {
             TokenType::FLOATLITERAL => println!("floatliteral"),
             TokenType::INTLITERAL => println!("intliteral"),
             TokenType::STRINGLITERAL => println!("stringliteral"),
-            TokenType::COMMENT => {
-                println!("This should never happen as comments are never pushed on the queue")
-            }
             TokenType::OPERATOR => println!("operator"),
+            _ => continue,
         }
 
         if let Some(peeked) = tok_iter.peek() {
