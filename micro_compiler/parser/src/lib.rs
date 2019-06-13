@@ -2,15 +2,13 @@ use scanner::{Token, TokenType};
 use std::collections::VecDeque;
 
 pub struct Program {
-    pub program: String,
     pub id: String,
-    pub pgm_body: Vec<String>,
-    pub decl: Option<String>,
+    pub pgm_body: Option<String>,
 }
 
-pub enum GlobalString {
-    StringDecl,
-    Str,
+pub struct GlobalString {
+    pub id: String,
+    pub s: String,
 }
 
 pub fn parse_file(tokens: VecDeque<Token>) {
