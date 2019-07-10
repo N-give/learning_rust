@@ -5,17 +5,17 @@ extern crate num_derive;
 
 use num;
 use regex::{self, Regex, RegexSet};
-use std::collections::VecDeque;
+// use std::collections::VecDeque;
 use std::io::prelude::*;
 use std::io::BufReader;
 
-static IDENTIFIER_PATTERN: &str = r"[a-zA-Z]{1}[a-zA-Z0-9]*";
-static INTLITERAL_PATTERN: &str = r"\d+";
-static FLOATLITER_PATTERN: &str = r"\d*\.\d+";
-static STRINGLITERAL_PATTERN: &str = r#"".*""#;
-static COMMENT_PATTERN: &str = r"--.*";
-static OPERATORS_PATTERN: &str = r"\+|-|\*|/|\(|\)|;|,|!=|:=|<=|<|>=|>|=";
-static KEYWORDS_PATTERN: &str = r"PROGRAM|BEGIN|FUNCTION|READ|WRITE|ELSE|ENDIF|IF|WHILE|ENDWHILE|RETURN|INT|VOID|STRING|FLOAT|TRUE|FALSE|ENDFOR|FOR|CONTINUE|END|BREAK";
+const IDENTIFIER_PATTERN: &str = r"[a-zA-Z]{1}[a-zA-Z0-9]*";
+const INTLITERAL_PATTERN: &str = r"\d+";
+const FLOATLITER_PATTERN: &str = r"\d*\.\d+";
+const STRINGLITERAL_PATTERN: &str = r#"".*""#;
+const COMMENT_PATTERN: &str = r"--.*";
+const OPERATORS_PATTERN: &str = r"\+|-|\*|/|\(|\)|;|,|!=|:=|<=|<|>=|>|=";
+const KEYWORDS_PATTERN: &str = r"PROGRAM|BEGIN|FUNCTION|READ|WRITE|ELSE|ENDIF|IF|WHILE|ENDWHILE|RETURN|INT|VOID|STRING|FLOAT|TRUE|FALSE|ENDFOR|FOR|CONTINUE|END|BREAK";
 
 lazy_static! {
     static ref ALL_REGEX: Vec<Regex> = vec![
@@ -62,9 +62,9 @@ pub enum TokenType {
     OPERATOR = 6,
 }
 
-pub fn scan_file(fp: std::fs::File) -> Result<VecDeque<Token>, std::io::Error> {
+pub fn scan_file(fp: std::fs::File) -> Result<Vec<Token>, std::io::Error> {
     let reader = BufReader::new(fp);
-    let mut tokens = VecDeque::new();
+    let mut tokens = Vec::new();
 
     for line in reader.lines() {
         let line = line.expect("failed to read line");
@@ -77,15 +77,15 @@ pub fn scan_file(fp: std::fs::File) -> Result<VecDeque<Token>, std::io::Error> {
     Ok(tokens)
 }
 
-fn get_tokens(line: &str) -> Result<VecDeque<Token>, std::io::Error> {
-    let mut toks: VecDeque<Token> = VecDeque::new();
+fn get_tokens(line: &str) -> Result<Vec<Token>, std::io::Error> {
+    let mut toks: Vec<Token> = Vec::new();
     let mut end: usize = 0;
 
     while {
         let matched = REGEX_SET.matches(&line[end..]);
         if matched.matched_any() {
             // TODO
-            // very un-optimized
+            // not very optimized
             // should cache results from here and work through those before
             // testing again
             let (t, m) = matched
@@ -95,7 +95,7 @@ fn get_tokens(line: &str) -> Result<VecDeque<Token>, std::io::Error> {
                 .unwrap();
             let t = num::FromPrimitive::from_usize(t).unwrap();
             if t != TokenType::COMMENT {
-                toks.push_back(Token::new(
+                toks.push(Token::new(
                     line[(end + m.start())..(end + m.end())].trim().to_string(),
                     t,
                 ));
