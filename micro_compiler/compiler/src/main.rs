@@ -1,6 +1,7 @@
 // use fancy_scanner;
 
-use parser::parse_file;
+use parser::get_basic_statement;
+use parser::get_program;
 use scanner;
 use std::env;
 use std::fs::File;
@@ -13,7 +14,15 @@ fn main() -> Result<(), std::io::Error> {
         std::process::exit(-1);
     }
     let fp = File::open(argv[1].to_owned())?;
-    let tokens = scanner::scan_file(fp)?;
-    parse_file(tokens);
+    let mut tokens = scanner::scan_file(fp)?;
+
+    /*
+    let prog = get_program(&mut tokens);
+    println!("{:#?}", prog);
+
+    while let Some(statement) = get_basic_statement(&mut tokens) {
+        println!("{:#?}", statement);
+    }
+    */
     Ok(())
 }

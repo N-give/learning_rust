@@ -1,4 +1,5 @@
-use scanner::{Token, TokenType};
+use scanner::Token;
+use scanner::TokenType;
 // use std::collections::VecDeque;
 
 pub enum VarType {
@@ -7,6 +8,15 @@ pub enum VarType {
     VOID,
 }
 
+#[derive(Debug)]
+pub enum StatementType {
+    ASSIGN, // id := expr
+    READ, // READ ( id_list );
+    WRITE, // WRITE ( id_list );
+    RETURN, // RETURN expr;
+}
+
+#[derive(Debug)]
 pub struct Program<'a> {
     pub id: String,
     pub pgm_body: Option<&'a [Token]>,
@@ -36,55 +46,72 @@ pub struct FunctionDeclaration<'a> {
     pub func_body: Option<&'a [Token]>,
 }
 
-pub fn parse_file(tokens: Vec<Token>) {
-    let mut tok_iter = tokens.iter().peekable();
+#[derive(Debug)]
+pub struct Statement {
+    pub stmt_type: StatementType,
+    pub stmt: Vec<Token>,
+}
 
-    while let Some(tok) = tok_iter.next() {
-        match tok.token_type {
-            TokenType::KEYWORD => {
-                // TODO build structs to hold keyword types
-                println!("keyword");
-            }
-            TokenType::IDENTIFIER => {
-                // TODO
-                println!("identifier");
-            }
-            TokenType::FLOATLITERAL => {
-                println!("floatliteral");
-            }
-            TokenType::INTLITERAL => {
-                println!("intliteral");
-            }
-            TokenType::STRINGLITERAL => {
-                println!("stringliteral");
-            }
-            TokenType::OPERATOR => {
-                println!("operator");
-            }
+impl Statement {
+    pub fn new(items: Vec<Token>) -> Statement {
+        Statement {
+            stmt_type: StatementType::ASSIGN,
+            stmt: items,
+        }
+    }
+}
+
+pub fn parse_file(mut tokens: Vec<Token>) {
+    while !tokens.is_empty() {
+        match tokens[0].token_type {
+            TokenType::KEYWORD => handle_keyword(&mut tokens),
+            TokenType::IDENTIFIER => unimplemented!(),
+            TokenType::OPERATOR => unimplemented!(),
             _ => unreachable!(),
         }
-
-        if let Some(peeked) = tok_iter.peek() {
-            print!("\t");
-            match peeked.token_type {
-                TokenType::KEYWORD => println!("keyword"),
-                TokenType::IDENTIFIER => println!("identifier"),
-                TokenType::FLOATLITERAL => println!("floatliteral"),
-                TokenType::INTLITERAL => println!("intliteral"),
-                TokenType::STRINGLITERAL => println!("stringliteral"),
-                TokenType::OPERATOR => println!("operator"),
-                _ => continue,
-            }
-        }
     }
 }
 
-/*
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+fn handle_keyword(tokens: &mut Vec<Token>) {
+    match tokens[0].value {
+        "PROGRAM" => unimplemented!(),
+        "BEGIN" => unimplemented!(),
+        "FUNCTION" => unimplemented!(),
+        "READ" => unimplemented!(),
+        "WRITE" => unimplemented!(),
+        "ELSE" => unimplemented!(),
+        "ENDIF" => unimplemented!(),
+        "IF" => unimplemented!(),
+        "WHILE" => unimplemented!(),
+        "ENDWHILE" => unimplemented!(),
+        "RETURN" => unimplemented!(),
+        "INT" => unimplemented!(),
+        "VOID" => unimplemented!(),
+        "STRING" => unimplemented!(),
+        "FLOAT" => unimplemented!(),
+        "TRUE" => unimplemented!(),
+        "FALSE" => unimplemented!(),
+        "ENDFOR" => unimplemented!(),
+        "FOR" => unimplemented!(),
+        "CONTINUE" => unimplemented!(),
+        "END" => unimplemented!(),
+        "BREAK" => unimplemented!(),
+        _ => unimplemented!(),
     }
 }
-*/
+
+pub fn get_program(tokens: &mut Vec<Token>) -> Program {
+    Program {
+        id: tokens.remove(0).value,
+        pgm_body: None,
+    }
+}
+
+pub fn get_basic_statement(tokens: &mut Vec<Token>) -> Option<Statement> {
+    if let Some(pos) = tokens.iter().position(|t| t.value == ";") {
+        let stmt = tokens.drain(..=pos);
+        Some(Statement::new(stmt.collect()))
+    } else {
+        None
+    }
+}
